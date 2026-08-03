@@ -225,10 +225,11 @@ public class MainWindow extends JFrame {
         gc.fill = GridBagConstraints.BOTH; gc.gridwidth = 1;
         fields.add(wordingScroll, gc);
 
-        // Stub buttons beside wording
+        // Buttons beside wording
         JPanel wordingButtons = new JPanel(new GridLayout(2, 1, 4, 4));
-        loadScreenshotBtn.setEnabled(false);
-        loadScreenshotBtn.setToolTipText("OCR not yet implemented");
+        loadScreenshotBtn.setEnabled(true);
+        loadScreenshotBtn.setToolTipText("Load an image via browse, drag-and-drop, or clipboard paste, then OCR into Wording");
+        loadScreenshotBtn.addActionListener(e -> onLoadScreenshot());
         refineBtn.setEnabled(false);
         refineBtn.setToolTipText("AI refinement not yet implemented");
         wordingButtons.add(loadScreenshotBtn);
@@ -379,6 +380,17 @@ public class MainWindow extends JFrame {
         dbManager.close();
         dispose();
         System.exit(0);
+    }
+
+    private void onLoadScreenshot() {
+        ScreenshotOcrDialog dlg = new ScreenshotOcrDialog(this);
+        dlg.setVisible(true);
+        String text = dlg.getExtractedText();
+        if (text != null && !text.isBlank()) {
+            wordingArea.setText(text);
+            wordingArea.setCaretPosition(0);
+            markDirty();
+        }
     }
 
     private void applyStockPhrase() {
