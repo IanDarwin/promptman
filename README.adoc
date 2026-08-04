@@ -62,8 +62,28 @@ java -jar target/prompt-manager.jar
 
 The Maven build produces a self-contained fat JAR with sqlite-jdbc bundled.
 
-## Adding AI Refinement (future)
+### OpenBSD/NetBSD/FreeBSD note
 
-1. Use the provider/URL/key from `AppSettings`.
-2. Make an HTTP POST to the configured endpoint with the wording text.
-3. Implement `RefineAction` and enable `refineBtn` in `MainWindow`.
+Current versions of jtess (Java Tesseract), the OCR software, uses a library called JNA
+(hopefully someday they will move to using Java 25's FFI instead).
+I've declared in the POM a later version than the one they use,
+and on non-mainstream OSes you have to install it. 
+
+On OpenBSD, the process is below. On other OSes YMMV.
+
+	# Make sure both BSD-specific pieces are present.
+	doas pkg_add tesseract jna
+	# Install the BSD-specific JNA in our ~/.m2/repo for use instead of the one from Maven Central
+	mvn install:install-file -Dfile=/usr/local/share/java/classes/jna-jpms.jar \
+		-DgroupId=net.java.dev.jna -DartifactId=jna -Dversion=5.18.0 -Dpackaging=jar \
+		-DlocalRepositoryPath=lib -DcreateChecksum=true
+
+## Adding AI Refinement (proposal)
+
+The idea is to allow a single-button press to send the contents of the 
+text along with the command "Improve this prompt:".
+
+* Implement `RefineAction` and enable `refineBtn` in `MainWindow`.
+* Make an HTTP POST to the configured endpoint with the wording text.
+* Use the provider/URL/key from `AppSettings` 
+* Remove the "not implemented" text in the settings dialog.
