@@ -57,7 +57,6 @@ public class SettingsDialog extends JDialog {
 
         // ---- OCR section ----
         JPanel ocrPanel = new JPanel(new GridBagLayout());
-        ocrPanel.setBorder(new TitledBorder("OCR / Tesseract (not yet active)"));
         GridBagConstraints gc2 = new GridBagConstraints();
         gc2.insets = new Insets(4, 4, 4, 4);
         gc2.anchor = GridBagConstraints.WEST;
