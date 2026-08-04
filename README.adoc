@@ -1,6 +1,6 @@
 # AI Prompt Manager
 
-A Java 21 Swing desktop application for storing, searching, and managing AI prompts.
+A Java Swing desktop application for storing, searching, and managing AI prompts.
 
 ---
 
@@ -13,36 +13,41 @@ java -jar prompt-manager.jar
 ```
 
 The app creates `~/.prompt-manager/` on first run, containing:
-- `prompts.db` — SQLite database (auto-created with schema)
+- `prompts.db` — hsqldb database (auto-created with schema)
 - `settings.properties` — persisted settings
 
 ---
 
 ## Features implemented
 
-| Feature | Status |
-|---|---|
-| Split-view (list left, detail right) | ✅ |
-| Create / Save / Delete prompts | ✅ |
-| Summary, Wording, Comments, Date Created | ✅ |
-| Date auto-set on first save, read-only | ✅ |
-| Live text search across all three text fields | ✅ |
-| Unsaved-changes ("dirty") guard | ✅ |
-| Stock phrases panel with Prepend / Replace / Append radio buttons | ✅ |
-| Double-click or Apply button to insert stock phrase | ✅ |
-| Manage Stock Phrases dialog (add / edit / delete / reorder) | ✅ |
-| Settings screen (stubbed — AI & OCR not yet wired) | ✅ |
-| Seeded example stock phrases on first run | ✅ |
-| Settings & divider position persisted between sessions | ✅ |
+[options="header",cols="2,4"]
+|====
+| Feature | Status 
+| Split-view (list left, detail right) | ✅ 
+| Create / Save / Delete prompts | ✅ 
+| Summary, Wording, Comments, Date Created | ✅ 
+| Date auto-set on first save, read-only | ✅ 
+| Live text search across all three text fields | ✅ 
+| Unsaved-changes ("dirty") guard | ✅ 
+| Stock phrases panel with Prepend / Replace / Append radio buttons | ✅ 
+| Double-click or Apply button to insert stock phrase | ✅ 
+| Manage Stock Phrases dialog (add / edit / delete / reorder) | ✅ 
+| Settings screen (stubbed — AI & OCR not yet wired) | ✅ 
+| Seeded example stock phrases on first run | ✅ 
+| Settings & divider position persisted between sessions | ✅ 
+| Load Screenshot (OCR) | Testing
+|====
 
 ---
 
 ## Features scaffolded (not yet implemented)
 
-| Feature | Notes |
-|---|---|
-| **Load Screenshot (OCR)** | Button present but disabled. Wire up Tess4J + add `tess4j` Maven dep |
-| **Refine with AI** | Button present but disabled. Wire up HTTP call to configured provider |
+[options="header",cols="2,4"]
+|====
+| Feature | Notes
+| **Refine with AI** | Button present but disabled. Wire up HTTP call to configured provider
+| **Add Category** | Add to db & dao, with drop-down chooser, simple editor.
+|====
 
 ---
 
@@ -79,21 +84,6 @@ java -jar target/prompt-manager.jar
 ```
 
 The Maven build produces a self-contained fat JAR with sqlite-jdbc bundled.
-
----
-
-## Adding OCR (future)
-
-1. Add to `pom.xml`:
-   ```xml
-   <dependency>
-       <groupId>net.sourceforge.tess4j</groupId>
-       <artifactId>tess4j</artifactId>
-       <version>5.11.0</version>
-   </dependency>
-   ```
-2. Install Tesseract on the host machine.
-3. Implement `LoadScreenshotAction` and enable `loadScreenshotBtn` in `MainWindow`.
 
 ## Adding AI Refinement (future)
 
