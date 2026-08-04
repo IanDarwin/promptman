@@ -10,18 +10,20 @@ import java.sql.*;
 public class DatabaseManager {
 
     private static final String DB_DIR  = System.getProperty("user.home") + File.separator + ".prompt-manager";
-    private static final String DB_PATH = DB_DIR + File.separator + "prompts.db";
+    private static final String DB_NAME = "prompts.db";
+    private static final String DB_PATH = DB_DIR + File.separator + DB_NAME;
     private static final String URL     = "jdbc:hsqldb:" + DB_PATH;
 
     private static DatabaseManager instance;
     private Connection connection;
 
-    private DatabaseManager() throws SQLException {
+    private DatabaseManager() throws SQLException, ClassNotFoundException {
         // Ensure the storage directory exists
         File dir = new File(DB_DIR);
         if (!dir.exists()) {
             dir.mkdirs();
         }
+        Class.forName("org.hsqldb.jdbcDriver");
         connection = DriverManager.getConnection(URL);
 //        // Enable WAL mode for better concurrency
 //        try (Statement st = connection.createStatement()) {
@@ -31,7 +33,7 @@ public class DatabaseManager {
         createSchema();
     }
 
-    public static synchronized DatabaseManager getInstance() throws SQLException {
+    public static synchronized DatabaseManager getInstance() throws SQLException, ClassNotFoundException {
         if (instance == null || instance.connection.isClosed()) {
             instance = new DatabaseManager();
         }
