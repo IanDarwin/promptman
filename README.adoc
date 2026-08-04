@@ -1,6 +1,7 @@
 # AI Prompt Manager
 
-A Java Swing desktop application for storing, searching, and managing AI prompts.
+A desktop application for storing, searching, and managing AI prompts.
+Implemented in Java Swing.
 
 ---
 
@@ -49,30 +50,6 @@ The app creates `~/.prompt-manager/` on first run, containing:
 | **Add Category** | Add to db & dao, with drop-down chooser, simple editor.
 |====
 
----
-
-## Project structure
-
-```
-src/main/java/com/promptmanager/
-├── Main.java                       Entry point
-├── model/
-│   ├── Prompt.java
-│   └── StockPhrase.java
-├── dao/
-│   ├── DatabaseManager.java        SQLite connection + schema init
-│   ├── PromptDAO.java              CRUD + full-text search
-│   └── StockPhraseDAO.java         CRUD + reorder
-├── util/
-│   └── AppSettings.java            ~/.prompt-manager/settings.properties
-└── ui/
-    ├── MainWindow.java             Main split-pane frame
-    ├── PromptTableModel.java       JTable model for left panel
-    ├── SettingsDialog.java         Settings screen
-    └── StockPhrasesDialog.java     Manage stock phrases
-```
-
----
 
 ## Building from source
 
