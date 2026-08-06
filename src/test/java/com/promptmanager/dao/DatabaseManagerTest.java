@@ -11,7 +11,7 @@ class DatabaseManagerTest {
     @Test
     void connectionCanBeOpened() throws Exception {
 
-        DatabaseManager db = DatabaseManager.getInstance();
+        DatabaseManager db = DatabaseManager.getInstance(true);
 
         Connection conn = db.getConnection();
 
