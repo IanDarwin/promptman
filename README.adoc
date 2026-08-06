@@ -56,16 +56,16 @@ The Maven build produces a self-contained fat JAR with dependencies bundled.
 
 ### OpenBSD/NetBSD/FreeBSD note
 
-Current versions of jtess (Java Tesseract), the OCR software, uses a library called JNA
-(hopefully someday they will move to using Java 25's FFI instead).
-I've declared in the POM a later version than the one they use,
+Current versions of tess4j (Java Tesseract), the OCR software, uses a library called JNA
+(hopefully someday they will move to using Java 22's FFI instead).
+I've declared in the POM a later version of JNA than the one they use,
 and on non-mainstream OSes you have to install it. 
-
 On OpenBSD, the process is below. On other OSes YMMV.
 
 	# Make sure both BSD-specific pieces are present.
 	doas pkg_add tesseract jna
-	# Install the BSD-specific JNA in our ~/.m2/repo for use instead of the one from Maven Central
+	# Install the BSD-specific JNA in our ~/.m2/repository to be picked up
+	# instead of the one from Maven Central
 	mvn install:install-file -Dfile=/usr/local/share/java/classes/jna-jpms.jar \
 		-DgroupId=net.java.dev.jna -DartifactId=jna -Dversion=5.18.0 -Dpackaging=jar \
 		-DlocalRepositoryPath=lib -DcreateChecksum=true
