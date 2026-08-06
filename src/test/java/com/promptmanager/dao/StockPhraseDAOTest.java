@@ -14,7 +14,7 @@ class StockPhraseDAOTest {
 
     @BeforeEach
     void setup() throws Exception {
-        dao = new StockPhraseDAO(DatabaseManager.getInstance());
+        dao = new StockPhraseDAO(DatabaseManager.getInstance(true));
     }
 
     @Test

@@ -17,7 +17,7 @@ public class StockPhrasesDialog extends JDialog {
     private final StockPhraseDAO dao;
     private final DefaultListModel<StockPhrase> listModel = new DefaultListModel<>();
     private final JList<StockPhrase> phraseList = new JList<>(listModel);
-    private final JTextArea textArea = new JTextArea(4, 50);
+    private final JTextArea textArea = new JTextArea(4, 40);
 
     public StockPhrasesDialog(Frame owner, StockPhraseDAO dao) {
         super(owner, "Manage Stock Phrases", true);
