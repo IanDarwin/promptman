@@ -37,20 +37,10 @@ The app creates `~/.prompt-manager/` on first run, containing:
 | Settings screen (stubbed — AI & OCR not yet wired) | ✅ 
 | Seeded example stock phrases on first run | ✅ 
 | Settings & divider position persisted between sessions | ✅ 
-| Load Screenshot (OCR) | Testing
+| Load Screenshot (OCR) | ✅ 
 |====
 
 ---
-
-## Features scaffolded (not yet implemented)
-
-[options="header",cols="2,4"]
-|====
-| Feature | Notes
-| **Refine with AI** | Button present but disabled. Wire up HTTP call to configured provider
-| **Add Category** | Add to db & dao, with drop-down chooser, simple editor.
-|====
-
 
 ## Building from source
 
@@ -82,6 +72,10 @@ On OpenBSD, the process is below. On other OSes YMMV.
 The POM file is already configured to use this.
 
 ## Possible Additions
+
+### More Unit Tests.
+
+Obviously.
 
 ### Adding AI Refinement (proposal)
 
