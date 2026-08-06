@@ -29,10 +29,10 @@ This app creates `~/.prompt-manager/` on first run, containing:
 [options="header",cols="2,4"]
 |====
 | Feature | Status 
+| Prompt object has Name/Summary, Text, Created Date, optional Comment | ✅ 
+| Date auto-set on first save, read-only | ✅ 
 | Split-view (list left, detail right) | ✅ 
 | Create / Save / Delete prompts | ✅ 
-| Summary, Wording, Comments, Date Created | ✅ 
-| Date auto-set on first save, read-only | ✅ 
 | Live text search across all three text fields | ✅ 
 | Unsaved-changes ("dirty") guard | ✅ 
 | Manage Stock Phrases dialog (add / edit / delete / reorder) | ✅ 
