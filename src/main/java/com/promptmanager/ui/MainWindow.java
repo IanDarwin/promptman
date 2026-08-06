@@ -70,7 +70,7 @@ public class MainWindow extends JFrame {
             DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
 
     public MainWindow(DatabaseManager dbManager) {
-        super("AI Prompt Manager");
+        super("PromptMan, the AI Prompt Manager");
         this.dbManager     = dbManager;
         this.promptDAO     = new PromptDAO(dbManager);
         this.stockPhraseDAO = new StockPhraseDAO(dbManager);

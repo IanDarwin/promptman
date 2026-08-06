@@ -1,1 +1,1 @@
-java --enable-native-access=ALL-UNNAMED -Djna.nosys=true -jar target/*.jar
+java --enable-native-access=ALL-UNNAMED -jar target/*.jar

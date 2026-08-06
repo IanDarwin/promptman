@@ -1,4 +1,4 @@
-# AI Prompt Manager
+# PromptMan, the AI Prompt Manager
 
 A desktop application for storing, searching, and managing AI prompts.
 Implemented in Java Swing.
@@ -7,11 +7,12 @@ Implemented in Java Swing.
 
 ## Running the app
 
-You need **Java 21** (or later) installed.
+You need **Java 21** (or later) installed. Not tested with any earlier releases.
 
 ```bash
-java -jar prompt-manager.jar
+java --enable-native-access=ALL-UNNAMED -jar target/*.jar
 ```
+
 
 The app creates `~/.prompt-manager/` on first run, containing:
 - `prompts.db` — hsqldb database (auto-created with schema)
@@ -78,9 +79,13 @@ On OpenBSD, the process is below. On other OSes YMMV.
 		-DgroupId=net.java.dev.jna -DartifactId=jna -Dversion=5.18.0 -Dpackaging=jar \
 		-DlocalRepositoryPath=lib -DcreateChecksum=true
 
-## Adding AI Refinement (proposal)
+The POM file is already configured to use this.
 
-The idea is to allow a single-button press to send the contents of the 
+## Possible Additions
+
+### Adding AI Refinement (proposal)
+
+The idea is to allow a single-button press to send, to an AI, the contents of the 
 text along with the command "Improve this prompt:".
 
 * Implement `RefineAction` and enable `refineBtn` in `MainWindow`.
