@@ -73,11 +73,6 @@ public class SettingsDialog extends JDialog {
         gc2.gridx = 2; gc2.gridy = 0;
         ocrPanel.add(browseBtn, gc2);
 
-        JLabel ocrNote = new JLabel("  ⚠ OCR integration is not yet implemented. Settings are saved for future use.");
-        ocrNote.setForeground(new Color(160, 100, 0));
-        gc2.gridx = 0; gc2.gridy = 1; gc2.gridwidth = 3;
-        ocrPanel.add(ocrNote, gc2);
-
         centre.add(aiPanel);
         centre.add(Box.createVerticalStrut(8));
         centre.add(ocrPanel);

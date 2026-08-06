@@ -137,7 +137,7 @@ public class MainWindow extends JFrame {
         toolsMenu.add(settingsItem);
 
         JMenu helpMenu = new JMenu("Help");
-        JMenuItem usage = new JMenuItem("Usage");
+        JMenuItem usage = new JMenuItem("Usage (Opens in your browser)");
         if (Desktop.isDesktopSupported()) {
             usage.addActionListener(e -> {
                 var desktop = Desktop.getDesktop();
