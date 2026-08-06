@@ -24,7 +24,7 @@ public class DatabaseManager {
     private DatabaseManager(boolean isTest) throws SQLException, ClassNotFoundException {
         if (isTest) {
             Class.forName("org.hsqldb.jdbcDriver");
-            connection = DriverManager.getConnection("jdbc:hsqldb:mem");
+            connection = DriverManager.getConnection("jdbc:hsqldb:mem:testdb");
         } else {
             // Ensure the storage directory exists
             File dir = new File(DB_DIR);

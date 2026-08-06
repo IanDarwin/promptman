@@ -14,7 +14,7 @@ class PromptDAOTest {
 
     @BeforeEach
     void setup() throws Exception {
-        dao = new PromptDAO(DatabaseManager.getInstance(false));
+        dao = new PromptDAO(DatabaseManager.getInstance(true));
     }
 
     @Test
