@@ -24,7 +24,7 @@ This app creates `~/.prompt-manager/` on first run, containing:
 
 ---
 
-## Features implemented
+## Features
 
 [options="header",cols="2,4"]
 |====
@@ -35,13 +35,10 @@ This app creates `~/.prompt-manager/` on first run, containing:
 | Date auto-set on first save, read-only | ✅ 
 | Live text search across all three text fields | ✅ 
 | Unsaved-changes ("dirty") guard | ✅ 
-| Stock phrases panel with Prepend / Replace / Append radio buttons | ✅ 
-| Double-click or Apply button to insert stock phrase | ✅ 
 | Manage Stock Phrases dialog (add / edit / delete / reorder) | ✅ 
-| Settings screen (stubbed — AI & OCR not yet wired) | ✅ 
-| Seeded example stock phrases on first run | ✅ 
+| Settings screen (stubbed — AI not yet wired) | ✅ 
 | Settings & divider position persisted between sessions | ✅ 
-| Load Screenshot (OCR) | ✅ 
+| Load Screenshot (OCR), edit before adding to Prompt | ✅ 
 |====
 
 ---
@@ -55,7 +52,7 @@ mvn package
 java -jar target/prompt-manager.jar
 ```
 
-The Maven build produces a self-contained fat JAR with sqlite-jdbc bundled.
+The Maven build produces a self-contained fat JAR with dependencies bundled.
 
 ### OpenBSD/NetBSD/FreeBSD note
 
