@@ -18,24 +18,32 @@ public class DatabaseManager {
     private Connection connection;
 
     private DatabaseManager() throws SQLException, ClassNotFoundException {
-        // Ensure the storage directory exists
-        File dir = new File(DB_DIR);
-        if (!dir.exists()) {
-            dir.mkdirs();
+        this(false);
+    }
+
+    private DatabaseManager(boolean isTest) throws SQLException, ClassNotFoundException {
+        if (isTest) {
+            Class.forName("org.hsqldb.jdbcDriver");
+            connection = DriverManager.getConnection("jdbc:hsqldb:mem");
+        } else {
+            // Ensure the storage directory exists
+            File dir = new File(DB_DIR);
+            if (!dir.exists()) {
+                dir.mkdirs();
+            }
+            Class.forName("org.hsqldb.jdbcDriver");
+            connection = DriverManager.getConnection(URL);
         }
-        Class.forName("org.hsqldb.jdbcDriver");
-        connection = DriverManager.getConnection(URL);
-//        // Enable WAL mode for better concurrency
-//        try (Statement st = connection.createStatement()) {
-//            st.execute("PRAGMA journal_mode=WAL");
-//            st.execute("PRAGMA foreign_keys=ON");
-//        }
         createSchema();
     }
 
     public static synchronized DatabaseManager getInstance() throws SQLException, ClassNotFoundException {
-        if (instance == null || instance.connection.isClosed()) {
-            instance = new DatabaseManager();
+        return DatabaseManager.getInstance(false);
+    }
+
+    public static synchronized DatabaseManager getInstance(boolean isTest) throws SQLException, ClassNotFoundException {
+        if (isTest || instance == null || instance.connection.isClosed()) {
+            instance = new DatabaseManager(isTest);
         }
         return instance;
     }

@@ -40,7 +40,7 @@ public class AppSettings {
     public String getAiModel()       { return props.getProperty("ai.model",     "gpt-4o"); }
     public void   setAiModel(String v)    { props.setProperty("ai.model", v); }
 
-    // ---- OCR settings (stubbed) ----
+    // ---- OCR settings ----
 
     public String getTesseractDataPath() { return props.getProperty("ocr.tesseractDataPath", ""); }
     public void   setTesseractDataPath(String v) { props.setProperty("ocr.tesseractDataPath", v); }
@@ -59,7 +59,7 @@ public class AppSettings {
                 props.store(out, "AI Prompt Manager Settings");
             }
         } catch (IOException e) {
-            System.err.println("Could not save settings: " + e.getMessage());
+            throw new RuntimeException("Could not save settings: " + e.getMessage());
         }
     }
 
@@ -69,7 +69,7 @@ public class AppSettings {
             try (InputStream in = new FileInputStream(f)) {
                 props.load(in);
             } catch (IOException e) {
-                System.err.println("Could not load settings: " + e.getMessage());
+                throw new RuntimeException("Could not load settings: " + e.getMessage());
             }
         }
     }
