@@ -86,7 +86,7 @@ Obviously.
 The idea is to allow a single-button press to send, to an AI, the contents of the 
 text along with the command "Improve this prompt:".
 
-* Implement `RefineAction` and enable `refineBtn` in `MainWindow`.
-* Make an HTTP POST to the configured endpoint with the wording text.
-* Use the provider/URL/key from `AppSettings` 
+* Enable `refineBtn` in `MainWindow` and have an action doing the following:.
+** Get the provider/URL/key from `AppSettings` 
+** Make an HTTP POST to the configured endpoint with the wording text.
 * Remove the "not implemented" text in the settings dialog.
