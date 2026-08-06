@@ -12,6 +12,7 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.datatransfer.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.net.URI;
@@ -55,6 +56,7 @@ public class MainWindow extends JFrame {
     // ---- Stub buttons (not yet wired) ----
     private final JButton loadScreenshotBtn = new JButton("Load Screenshot…");
     private final JButton refineBtn         = new JButton("Refine with AI…");
+    private final JButton copyButton        = new JButton("Copy text");
 
     // ---- Stock phrases panel ----
     private final DefaultListModel<StockPhrase> phraseListModel = new DefaultListModel<>();
@@ -251,14 +253,28 @@ public class MainWindow extends JFrame {
         fields.add(wordingScroll, gc);
 
         // Buttons beside wording
-        JPanel wordingButtons = new JPanel(new GridLayout(2, 1, 4, 4));
+        JPanel wordingButtons = new JPanel(new GridLayout(3, 1, 4, 4));
         loadScreenshotBtn.setEnabled(true);
         loadScreenshotBtn.setToolTipText("Load an image via browse, drag-and-drop, or clipboard paste, then OCR into Wording");
         loadScreenshotBtn.addActionListener(e -> onLoadScreenshot());
         refineBtn.setEnabled(false);
         refineBtn.setToolTipText("AI refinement not yet implemented");
+        copyButton.setText("Copy Text to clipboard");
+        copyButton.addActionListener(e -> {
+                    Clipboard clipboard = this.getToolkit().getSystemClipboard();
+                    StringSelection contents = new StringSelection(wordingArea.getText());
+                    clipboard.setContents(contents, new ClipboardOwner() {
+                        public void lostOwnership(Clipboard clipboard,
+                                                  Transferable contents) {
+                            // don't care
+                        }
+
+                    });
+                }
+                );
         wordingButtons.add(loadScreenshotBtn);
         wordingButtons.add(refineBtn);
+        wordingButtons.add(copyButton);
         gc.gridx = 2; gc.weightx = 0; gc.fill = GridBagConstraints.NONE; gc.anchor = GridBagConstraints.NORTH;
         fields.add(wordingButtons, gc);
 
