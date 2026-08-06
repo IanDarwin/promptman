@@ -14,7 +14,9 @@ java --enable-native-access=ALL-UNNAMED -jar promptman.jar
 ```
 
 Where `promptman.jar` is downloaded from https://github.com/IanDarwin/promptman/releases/latest[]
-or built from source as described below.
+or built from source as described below. Actual file will have a version number.
+
+A full installer (including minimized JRE) for various OSes will be available in the `releases` folder, someday.
 
 This app creates `~/.prompt-manager/` on first run, containing:
 - `prompts.db` — hsqldb database (auto-created with schema)
