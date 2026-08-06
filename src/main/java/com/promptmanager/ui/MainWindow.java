@@ -14,6 +14,7 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.URI;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -65,6 +66,9 @@ public class MainWindow extends JFrame {
     // ---- State ----
     private Prompt currentPrompt = null;   // null means no selection / new record
     private boolean dirty = false;
+
+    // ---- Constants ----
+    final String URL = "https://darwinsys.com/promptman";
 
     private static final DateTimeFormatter DISPLAY_FMT =
             DateTimeFormatter.ofPattern("yyyy-MM-dd  HH:mm:ss");
@@ -130,8 +134,29 @@ public class MainWindow extends JFrame {
         toolsMenu.addSeparator();
         toolsMenu.add(settingsItem);
 
+        JMenu helpMenu = new JMenu("Help");
+        JMenuItem usage = new JMenuItem("Usage");
+        if (Desktop.isDesktopSupported()) {
+            usage.addActionListener(e -> {
+                var desktop = Desktop.getDesktop();
+                try {
+                    desktop.browse(new URI(URL));
+                } catch (Exception e1) {
+                    JOptionPane.showMessageDialog(this,
+                            "Failed to open browser to " + URL);
+                }
+            });
+        } else {
+            usage.setEnabled(false);
+        }
+        JMenuItem about = new JMenuItem("About");
+        about.addActionListener(e -> JOptionPane.showMessageDialog(this, "PromptMan 1.0.0"));
+        helpMenu.add(usage);
+        helpMenu.add(about);
+
         bar.add(fileMenu);
         bar.add(toolsMenu);
+        bar.add(helpMenu);
         return bar;
     }
 
