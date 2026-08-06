@@ -10,11 +10,13 @@ Implemented in Java Swing.
 You need **Java 21** (or later) installed. Not tested with any earlier releases.
 
 ```bash
-java --enable-native-access=ALL-UNNAMED -jar target/*.jar
+java --enable-native-access=ALL-UNNAMED -jar promptman.jar
 ```
 
+Where `promptman.jar` is downloaded from https://github.com/IanDarwin/promptman/releases/latest[]
+or built from source as described below.
 
-The app creates `~/.prompt-manager/` on first run, containing:
+This app creates `~/.prompt-manager/` on first run, containing:
 - `prompts.db` — hsqldb database (auto-created with schema)
 - `settings.properties` — persisted settings
 
