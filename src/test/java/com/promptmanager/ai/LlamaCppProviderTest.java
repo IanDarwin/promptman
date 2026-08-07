@@ -52,7 +52,7 @@ class LlamaCppProviderTest {
     @BeforeEach
     void setUp() {
         provider = new LlamaCppProvider();
-        Assumptions.assumeTrue(providerOK);
+        Assumptions.assumeTrue(providerOK, "Provider not usable");
     }
 
     // ---- Identity ----
