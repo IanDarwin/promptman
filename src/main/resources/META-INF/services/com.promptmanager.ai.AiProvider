@@ -1,0 +1,5 @@
+com.promptmanager.ai.OpenAiProvider
+com.promptmanager.ai.ClaudeProvider
+com.promptmanager.ai.GeminiProvider
+com.promptmanager.ai.OllamaProvider
+com.promptmanager.ai.LlamaCppProvider

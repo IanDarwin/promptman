@@ -1,35 +1,48 @@
 package com.promptmanager.ui;
 
+import com.promptmanager.ai.AiProvider;
 import com.promptmanager.util.AppSettings;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
 import java.awt.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Settings dialog.
- * AI and OCR fields are present and persisted but not yet wired to real logic.
+ *
+ * The AI section shows one panel per discovered provider, swapped in via a
+ * JComboBox.  Each provider panel contains whichever fields are relevant to
+ * that provider (base URL, API key, model).  Fields are loaded from and saved
+ * to AppSettings using the namespaced ai.<providerId>.<field> scheme.
  */
 public class SettingsDialog extends JDialog {
 
     private final AppSettings settings = AppSettings.getInstance();
 
-    // AI
-    private final JComboBox<String> providerBox  = new JComboBox<>(new String[]{"OpenAI", "Anthropic", "Ollama"});
-    private final JTextField baseUrlField        = new JTextField(40);
-    private final JPasswordField apiKeyField     = new JPasswordField(40);
-    private final JTextField modelField          = new JTextField(40);
+    // ---- AI: provider selector ----
+    private final JComboBox<String>         providerCombo  = new JComboBox<>();
+    private final JPanel                    providerCards  = new JPanel(new CardLayout());
+    /** Maps provider id → the fields shown for that provider. */
+    private final Map<String, ProviderPanel> providerPanels = new LinkedHashMap<>();
 
-    // OCR
-    private final JTextField tessDataField       = new JTextField(40);
+    // ---- OCR ----
+    private final JTextField tessDataField = new JTextField(40);
 
     public SettingsDialog(Frame owner) {
         super(owner, "Settings", true);
         initUI();
         loadFromSettings();
         pack();
+        setMinimumSize(new Dimension(540, 0));
         setLocationRelativeTo(owner);
     }
+
+    // =========================================================
+    //  UI construction
+    // =========================================================
 
     private void initUI() {
         setLayout(new BorderLayout(8, 8));
@@ -38,30 +51,70 @@ public class SettingsDialog extends JDialog {
         centre.setLayout(new BoxLayout(centre, BoxLayout.Y_AXIS));
         centre.setBorder(BorderFactory.createEmptyBorder(12, 12, 4, 12));
 
-        // ---- AI section ----
-        JPanel aiPanel = new JPanel(new GridBagLayout());
-        aiPanel.setBorder(new TitledBorder("AI Provider (not yet active)"));
+        centre.add(buildAiPanel());
+        centre.add(Box.createVerticalStrut(8));
+        centre.add(buildOcrPanel());
+
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JButton saveBtn   = new JButton("Save");
+        JButton cancelBtn = new JButton("Cancel");
+        saveBtn.addActionListener(e -> { saveToSettings(); dispose(); });
+        cancelBtn.addActionListener(e -> dispose());
+        buttons.add(saveBtn);
+        buttons.add(cancelBtn);
+
+        add(centre,  BorderLayout.CENTER);
+        add(buttons, BorderLayout.SOUTH);
+    }
+
+    private JPanel buildAiPanel() {
+        JPanel outer = new JPanel(new BorderLayout(4, 6));
+        outer.setBorder(new TitledBorder("AI Provider"));
+
+        // Provider selector row
+        JPanel selectorRow = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 2));
+        selectorRow.add(new JLabel("Active provider:"));
+        selectorRow.add(providerCombo);
+        outer.add(selectorRow, BorderLayout.NORTH);
+
+        // Discover providers; build one card per provider
+        List<AiProvider> providers = AiProvider.loadAll();
+        if (providers.isEmpty()) {
+            // Fallback if ServiceLoader finds nothing (e.g. running from IDE without resources)
+            providers = List.of(
+                new com.promptmanager.ai.OpenAiProvider(),
+                new com.promptmanager.ai.ClaudeProvider(),
+                new com.promptmanager.ai.GeminiProvider(),
+                new com.promptmanager.ai.OllamaProvider(),
+                new com.promptmanager.ai.LlamaCppProvider()
+            );
+        }
+
+        for (AiProvider p : providers) {
+            providerCombo.addItem(p.getName());
+            ProviderPanel panel = new ProviderPanel(p.getId());
+            providerPanels.put(p.getName(), panel);
+            providerCards.add(panel, p.getName());
+        }
+
+        providerCombo.addActionListener(e -> {
+            String selected = (String) providerCombo.getSelectedItem();
+            ((CardLayout) providerCards.getLayout()).show(providerCards, selected);
+        });
+
+        outer.add(providerCards, BorderLayout.CENTER);
+        return outer;
+    }
+
+    private JPanel buildOcrPanel() {
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(new TitledBorder("OCR / Tesseract"));
         GridBagConstraints gc = new GridBagConstraints();
         gc.insets = new Insets(4, 4, 4, 4);
         gc.anchor = GridBagConstraints.WEST;
 
-        addRow(aiPanel, gc, 0, "Provider:", providerBox);
-        addRow(aiPanel, gc, 1, "Base URL:", baseUrlField);
-        addRow(aiPanel, gc, 2, "API Key:", apiKeyField);
-        addRow(aiPanel, gc, 3, "Model:", modelField);
+        addRow(panel, gc, 0, "Tesseract data path:", tessDataField);
 
-        JLabel aiNote = new JLabel("  ⚠ AI integration is not yet implemented. Settings are saved for future use.");
-        aiNote.setForeground(new Color(160, 100, 0));
-        gc.gridx = 0; gc.gridy = 4; gc.gridwidth = 2;
-        aiPanel.add(aiNote, gc);
-
-        // ---- OCR section ----
-        JPanel ocrPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gc2 = new GridBagConstraints();
-        gc2.insets = new Insets(4, 4, 4, 4);
-        gc2.anchor = GridBagConstraints.WEST;
-
-        addRow(ocrPanel, gc2, 0, "Tesseract data path:", tessDataField);
         JButton browseBtn = new JButton("Browse…");
         browseBtn.addActionListener(e -> {
             JFileChooser fc = new JFileChooser();
@@ -70,49 +123,114 @@ public class SettingsDialog extends JDialog {
                 tessDataField.setText(fc.getSelectedFile().getAbsolutePath());
             }
         });
-        gc2.gridx = 2; gc2.gridy = 0;
-        ocrPanel.add(browseBtn, gc2);
+        gc.gridx = 2; gc.gridy = 0; gc.fill = GridBagConstraints.NONE;
+        panel.add(browseBtn, gc);
 
-        centre.add(aiPanel);
-        centre.add(Box.createVerticalStrut(8));
-        centre.add(ocrPanel);
-
-        // ---- Buttons ----
-        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        JButton saveBtn   = new JButton("Save");
-        JButton cancelBtn = new JButton("Cancel");
-        buttons.add(saveBtn);
-        buttons.add(cancelBtn);
-
-        saveBtn.addActionListener(e -> { saveToSettings(); dispose(); });
-        cancelBtn.addActionListener(e -> dispose());
-
-        add(centre, BorderLayout.CENTER);
-        add(buttons, BorderLayout.SOUTH);
+        return panel;
     }
 
-    private void addRow(JPanel panel, GridBagConstraints gc, int row, String label, JComponent field) {
-        gc.gridx = 0; gc.gridy = row; gc.gridwidth = 1; gc.fill = GridBagConstraints.NONE;
+    // =========================================================
+    //  Load / Save
+    // =========================================================
+
+    private void loadFromSettings() {
+        // Select the active provider in the combo
+        String activeId = settings.getActiveProviderId();
+        for (int i = 0; i < providerCombo.getItemCount(); i++) {
+            String name = providerCombo.getItemAt(i);
+            ProviderPanel pp = providerPanels.get(name);
+            if (pp != null && pp.providerId.equals(activeId)) {
+                providerCombo.setSelectedIndex(i);
+                break;
+            }
+        }
+
+        // Load each provider's fields
+        for (ProviderPanel pp : providerPanels.values()) {
+            pp.load();
+        }
+
+        tessDataField.setText(settings.getTesseractDataPath());
+    }
+
+    private void saveToSettings() {
+        // Save active provider id
+        String selectedName = (String) providerCombo.getSelectedItem();
+        ProviderPanel active = providerPanels.get(selectedName);
+        if (active != null) {
+            settings.setActiveProviderId(active.providerId);
+        }
+
+        // Save all provider fields
+        for (ProviderPanel pp : providerPanels.values()) {
+            pp.save();
+        }
+
+        settings.setTesseractDataPath(tessDataField.getText().trim());
+        settings.save();
+    }
+
+    // =========================================================
+    //  Helpers
+    // =========================================================
+
+    private void addRow(JPanel panel, GridBagConstraints gc, int row,
+                        String label, JComponent field) {
+        gc.gridx = 0; gc.gridy = row; gc.gridwidth = 1;
+        gc.fill = GridBagConstraints.NONE; gc.weightx = 0;
         panel.add(new JLabel(label), gc);
         gc.gridx = 1; gc.fill = GridBagConstraints.HORIZONTAL; gc.weightx = 1.0;
         panel.add(field, gc);
         gc.weightx = 0;
     }
 
-    private void loadFromSettings() {
-        providerBox.setSelectedItem(settings.getAiProvider());
-        baseUrlField.setText(settings.getAiBaseUrl());
-        apiKeyField.setText(settings.getAiApiKey());
-        modelField.setText(settings.getAiModel());
-        tessDataField.setText(settings.getTesseractDataPath());
-    }
+    // =========================================================
+    //  Inner class: per-provider field panel
+    // =========================================================
 
-    private void saveToSettings() {
-        settings.setAiProvider((String) providerBox.getSelectedItem());
-        settings.setAiBaseUrl(baseUrlField.getText().trim());
-        settings.setAiApiKey(new String(apiKeyField.getPassword()));
-        settings.setAiModel(modelField.getText().trim());
-        settings.setTesseractDataPath(tessDataField.getText().trim());
-        settings.save();
+    /**
+     * A small panel holding the settings fields for one provider.
+     * Fields that don't apply to a given provider are simply left empty
+     * and invisible, keeping the layout consistent.
+     */
+    private class ProviderPanel extends JPanel {
+
+        final String         providerId;
+        final JTextField     baseUrlField = new JTextField(36);
+        final JPasswordField apiKeyField  = new JPasswordField(36);
+        final JTextField     modelField   = new JTextField(36);
+
+        ProviderPanel(String providerId) {
+            super(new GridBagLayout());
+            this.providerId = providerId;
+            buildFields();
+        }
+
+        private void buildFields() {
+            GridBagConstraints gc = new GridBagConstraints();
+            gc.insets = new Insets(3, 4, 3, 4);
+            gc.anchor = GridBagConstraints.WEST;
+
+            // Base URL — shown for all providers; local ones use localhost defaults
+            addRow(this, gc, 0, "Base URL:", baseUrlField);
+
+            // API Key — shown for all; local providers will leave it blank
+            addRow(this, gc, 1, "API Key:", apiKeyField);
+
+            // Model
+            addRow(this, gc, 2, "Model:", modelField);
+        }
+
+        void load() {
+            baseUrlField.setText(settings.getProviderSetting(providerId, "baseUrl", ""));
+            apiKeyField.setText( settings.getProviderSetting(providerId, "apiKey",  ""));
+            modelField.setText(  settings.getProviderSetting(providerId, "model",   ""));
+        }
+
+        void save() {
+            settings.setProviderSetting(providerId, "baseUrl", baseUrlField.getText().trim());
+            settings.setProviderSetting(providerId, "apiKey",  new String(apiKeyField.getPassword()));
+            settings.setProviderSetting(providerId, "model",   modelField.getText().trim());
+        }
     }
 }
