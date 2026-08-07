@@ -33,20 +33,26 @@ class LlamaCppProviderTest {
 
     private LlamaCppProvider provider;
 
+    private static Boolean providerOK;
+
+    @BeforeAll
+    static void dofirst() {
+        if (providerOK == null) {
+            providerOK =
+                    new LlamaCppProvider().isAvailable();
+            if (!providerOK) {
+                System.err.println("llama-cpp server not reachable at "
+                        + AppSettings.getInstance().getProviderSetting(
+                        LlamaCppProvider.LLAMACPP_ID, "baseUrl", "http://localhost:8080/v1")
+                        + " — skipping live tests");
+            }
+        }
+    }
+
     @BeforeEach
     void setUp() {
         provider = new LlamaCppProvider();
-        // Skip all tests in this class if the server is not reachable.
-        // Assumptions.assumeTrue causes JUnit 5 to mark the test as "skipped"
-        // rather than "failed", which is the correct behaviour for an
-        // optional external dependency.
-        Assumptions.assumeTrue(
-                provider.isAvailable(),
-                "llama-cpp server not reachable at "
-                        + AppSettings.getInstance().getProviderSetting(
-                                LlamaCppProvider.LLAMACPP_ID, "baseUrl", "http://localhost:8080/v1")
-                        + " — skipping live tests"
-        );
+        Assumptions.assumeTrue(providerOK);
     }
 
     // ---- Identity ----
@@ -77,7 +83,7 @@ class LlamaCppProviderTest {
     void complete_responseIsReasonableLength() throws AiException {
         String response = provider.complete("What is 2 + 2? Reply with the number only.");
         // Sanity-check: response should be at least one character and not absurdly long
-        assertTrue(response.length() >= 1);
+        assertFalse(response.isEmpty());
         assertTrue(response.length() < 2000,
                 "Unexpectedly long response (" + response.length() + " chars)");
     }
